@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>词汇复习 · 两轮练习</title>
+<style>
+:root{
+  --kimi-font-sans:-apple-system,BlinkMacSystemFont,'PingFang SC','Microsoft YaHei',sans-serif;
+  --kimi-color-text-primary:#1a1a1a;--kimi-color-text-secondary:#555;--kimi-color-text-tertiary:#999;
+  --kimi-color-text-inverse:#fff;--kimi-color-border:#e3e3e3;--kimi-color-danger:#d6453d;
+  --kimi-color-fill-secondary:#f3f3f3;
+}
+body{font-family:var(--kimi-font-sans);margin:16px;background:#fff;color:var(--kimi-color-text-primary)}
+</style>
+</head>
+<body>
+<style>
+.vr{font-family:var(--kimi-font-sans,sans-serif);font-size:16px;line-height:1.5;color:var(--kimi-color-text-primary,#111);max-width:640px}
+.vr button{font:inherit;cursor:pointer}
+.vr .bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}
+.vr .chip{border:1px solid var(--kimi-color-border,#ddd);border-radius:6px;padding:2px 10px;font-size:13px;color:var(--kimi-color-text-secondary,#666)}
+.vr .chip b{color:var(--kimi-color-text-primary,#111);font-weight:500}
+.vr .tabs{display:flex;gap:8px;margin-bottom:12px}
+.vr .tab{padding:6px 14px;border-radius:8px;border:1px solid var(--kimi-color-border,#ddd);background:transparent;color:var(--kimi-color-text-secondary,#666)}
+.vr .tab.on{background:var(--kimi-color-text-primary,#111);color:var(--kimi-color-text-inverse,#fff);border-color:var(--kimi-color-text-primary,#111)}
+.vr .tab:disabled{opacity:.4;cursor:not-allowed}
+.vr .cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.vr .colhead{font-size:13px;color:var(--kimi-color-text-tertiary,#999);margin-bottom:6px}
+.vr .w{display:block;width:100%;text-align:left;padding:10px 12px;border:1px solid var(--kimi-color-border,#e0e0e0);border-radius:10px;background:transparent;margin-bottom:8px;transition:all .15s}
+.vr .w:hover{border-color:var(--kimi-color-text-primary,#111)}
+.vr .w.sel{background:var(--kimi-color-text-primary,#111);color:var(--kimi-color-text-inverse,#fff);border-color:var(--kimi-color-text-primary,#111)}
+.vr .w.done{opacity:.35;pointer-events:none;text-decoration:line-through}
+.vr .w.bad{border-color:var(--kimi-color-danger,#d33);color:var(--kimi-color-danger,#d33)}
+.vr .msg{margin:10px 0;font-size:14px;min-height:20px;color:var(--kimi-color-text-secondary,#555)}
+.vr .btn{padding:8px 16px;border-radius:8px;border:1px solid var(--kimi-color-text-primary,#111);background:var(--kimi-color-text-primary,#111);color:var(--kimi-color-text-inverse,#fff)}
+.vr .btn.ghost{background:transparent;color:var(--kimi-color-text-primary,#111)}
+.vr .row2{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+.vr ol.q{padding-left:0;list-style:none;counter-reset:q;margin:8px 0}
+.vr ol.q li{counter-increment:q;display:flex;gap:10px;align-items:baseline;padding:8px 0;border-bottom:1px solid var(--kimi-color-border,#eee)}
+.vr ol.q li::before{content:counter(q);min-width:22px;height:22px;border-radius:50%;background:var(--kimi-color-fill-secondary,#f2f2f2);display:inline-flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0}
+.vr .ans{color:var(--kimi-color-text-secondary,#666);font-size:14px}
+.vr .hideans .ans{display:none}
+.vr .panel{border:1px solid var(--kimi-color-border,#e0e0e0);border-radius:12px;padding:16px;margin-top:12px}
+.vr h3{font-size:17px;font-weight:500;margin:0 0 8px}
+.vr small.meta{color:var(--kimi-color-text-tertiary,#999)}
+.vr img.prev{max-width:100%;border-radius:10px;margin-top:8px}
+</style>
+<div class="vr">
+  <div class="bar"><strong style="font-size:17px;font-weight:500">词汇复习 · 两轮练习</strong><span class="chip">已掌握 <b id="cM">0</b>/20</span><span class="chip">需复习 <b id="cR">0</b></span><span class="chip">总错误 <b id="cE">0</b></span></div>
+  <div class="tabs">
+    <button class="tab on" id="t1">第一轮 · 中英匹配</button>
+    <button class="tab" id="t2" disabled title="完成第一轮后解锁">第二轮 · 默写对答案</button>
+  </div>
+
+  <div id="v1">
+    <div class="bar"><small class="meta" id="gInfo"></small></div>
+    <div class="cols">
+      <div><div class="colhead">英文（点击选择）</div><div id="enCol"></div></div>
+      <div><div class="colhead">中文（点击匹配）</div><div id="cnCol"></div></div>
+    </div>
+    <div class="msg" id="gMsg"></div>
+    <div class="row2"><button class="btn" id="nextG" style="display:none">下一组</button></div>
+    <div id="r1done" style="display:none" class="panel">
+      <h3>第一轮完成</h3>
+      <p style="font-size:14px;color:var(--kimi-color-text-secondary,#666)">全部 20 个词已过关。进入第二轮，用纸笔默写词性词义吧。</p>
+      <button class="btn" id="go2">进入第二轮</button>
+    </div>
+  </div>
+
+  <div id="v2" style="display:none">
+    <p style="font-size:14px;color:var(--kimi-color-text-secondary,#666);margin:0 0 8px">请拿出纸笔，按下方顺序默写每个单词的词性和词义；完成后点「对答案」用红笔改错，然后拍照打卡。</p>
+    <ol class="q hideans" id="quiz"></ol>
+    <div class="row2">
+      <button class="btn" id="reveal">对答案</button>
+      <button class="btn ghost" id="hide">隐藏答案</button>
+      <label class="btn ghost" style="display:inline-flex;align-items:center;gap:6px">拍照打卡<input type="file" accept="image/*" capture="environment" id="shot" style="display:none"></label>
+      <button class="btn" id="fin">完成打卡</button>
+    </div>
+    <img class="prev" id="prevImg" style="display:none" alt="打卡照片预览">
+    <div id="done2" style="display:none" class="panel"></div>
+  </div>
+</div>
+
+<script>
+var W=[["snowboard","v. & n.","单板滑雪"],["ski","v. & n.","（自由式）滑雪"],["important","a.","重要的"],["parent","n.；v.","父（母）亲；养育"],["coast","n.","海岸"],["net","n.","网"],["population","n.","人口；数量（种群）"],["relax","v.","休闲；放松"],["fishing rod","n.","鱼竿"],["smile","v.","微笑"],["sail","v.","航行"],["close","a.；v.","靠近的；亲密的；关闭（be close to）"],["land","n.；v.","陆地；土地；着陆"],["thin","a.","薄的；稀的；瘦的"],["cloth","n.","布"],["comfortable","a.","舒适的"],["popular","a.","流行的；受欢迎的"],["difficult","a.","困难的"],["slow","a.","慢的"],["athlete","n.","运动员"]];
+var matchedOnce=new Set(), review=new Set(), totalErr=0, groupNo=0, gErr=0, sel=null, cur=[];
+function $(id){return document.getElementById(id)}
+function shuf(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
+function upd(){var m=0;W.forEach(function(w){if(matchedOnce.has(w[0])&&!review.has(w[0]))m++});$("cM").textContent=m;$("cR").textContent=review.size;$("cE").textContent=totalErr}
+function pickGroup(){var p=shuf(W.filter(function(w){return review.has(w[0])}));p=p.concat(shuf(W.filter(function(w){return !review.has(w[0])&&!matchedOnce.has(w[0])})));return p.slice(0,5)}
+function renderGroup(){
+  gErr=0;sel=null;cur=pickGroup();
+  if(!cur.length){finish1();return}
+  groupNo++;
+  $("gInfo").textContent="第 "+groupNo+" 组 · 本组错误 "+gErr+" 次";
+  $("gMsg").textContent="";$("nextG").style.display="none";
+  var enc=$("enCol"),cnc=$("cnCol");enc.innerHTML="";cnc.innerHTML="";
+  shuf(cur).forEach(function(w){var b=document.createElement("button");b.className="w";b.dataset.k=w[0];b.textContent=w[0];enc.appendChild(b)});
+  shuf(cur).forEach(function(w){var b=document.createElement("button");b.className="w";b.dataset.k=w[0];b.textContent=w[2];cnc.appendChild(b)});
+  upd();
+}
+function onPick(e){
+  var btn=e.target.closest(".w");if(!btn||btn.classList.contains("done"))return;
+  var side=btn.parentElement.id==="enCol"?"e":"c",k=btn.dataset.k;
+  if(!sel){sel={side:side,el:btn,k:k};btn.classList.add("sel");return}
+  if(sel.side===side){sel.el.classList.remove("sel");sel={side:side,el:btn,k:k};btn.classList.add("sel");return}
+  if(sel.k===k){
+    sel.el.classList.add("done");btn.classList.add("done");sel.el.classList.remove("sel");sel=null;
+    matchedOnce.add(k);upd();
+    if(document.querySelectorAll("#v1 .w:not(.done)").length===0)finishGroup();
+  }else{
+    gErr++;totalErr++;upd();
+    $("gInfo").textContent="第 "+groupNo+" 组 · 本组错误 "+gErr+" 次";
+    [sel.el,btn].forEach(function(el){el.classList.add("bad");setTimeout(function(){el.classList.remove("bad")},400)});
+    sel.el.classList.remove("sel");sel=null;
+  }
+}
+function finishGroup(){
+  var ks=cur.map(function(w){return w[0]}),msg;
+  if(gErr>=2){ks.forEach(function(k){review.add(k)});msg="本组错误 "+gErr+" 次（≥2），这 "+cur.length+" 个词已进入「需要复习」，后续会再次出现。"}
+  else{ks.forEach(function(k){review.delete(k)});msg="本组通过，错误 "+gErr+" 次。"+(ks.some(function(k){return false})?"":"")}
+  var leftReview=ks.filter(function(k){return review.has(k)});
+  if(leftReview.length&&gErr<2)msg+="其中 "+leftReview.length+" 个词移出了复习列表。";
+  $("gMsg").textContent=msg;upd();
+  var done=W.every(function(w){return matchedOnce.has(w[0])})&&review.size===0;
+  if(done){finish1()}else{$("nextG").style.display="inline-block"}
+}
+function finish1(){
+  $("enCol").innerHTML="";$("cnCol").innerHTML="";$("gInfo").textContent="";$("gMsg").textContent="";$("nextG").style.display="none";
+  $("r1done").style.display="block";
+}
+$("v1").addEventListener("click",onPick);
+$("nextG").addEventListener("click",renderGroup);
+$("t1").addEventListener("click",function(){$("v1").style.display="block";$("v2").style.display="none";$("t1").classList.add("on");$("t2").classList.remove("on")});
+function openRound2(){
+  if($("t2").disabled)return;
+  $("v1").style.display="none";$("v2").style.display="block";
+  $("t2").classList.add("on");$("t1").classList.remove("on");
+}
+$("t2").addEventListener("click",openRound2);
+$("go2").addEventListener("click",function(){$("t2").disabled=false;openRound2()});
+// 第二轮
+var order=shuf(W),q=$("quiz");
+order.forEach(function(w){var li=document.createElement("li");li.innerHTML='<span style="min-width:96px;font-weight:500">'+w[0]+'</span><span class="ans">'+w[1]+' '+w[2]+'</span>';q.appendChild(li)});
+$("reveal").addEventListener("click",function(){q.classList.remove("hideans")});
+$("hide").addEventListener("click",function(){q.classList.add("hideans")});
+$("shot").addEventListener("change",function(e){
+  var f=e.target.files[0];if(!f)return;var r=new FileReader();
+  r.onload=function(ev){$("prevImg").src=ev.target.result;$("prevImg").style.display="block"};
+  r.readAsDataURL(f);
+});
+$("fin").addEventListener("click",function(){
+  var d=new Date(),m=("0"+(d.getMonth()+1)).slice(-2),day=("0"+d.getDate()).slice(-2),hh=("0"+d.getHours()).slice(-2),mm=("0"+d.getMinutes()).slice(-2);
+  $("done2").innerHTML="<h3>今日打卡完成</h3><p style='font-size:14px;color:var(--kimi-color-text-secondary,#666);margin:0'>打卡时间："+d.getFullYear()+"-"+m+"-"+day+" "+hh+":"+mm+"<br>第一轮总错误："+totalErr+" 次；第二轮默写顺序已固定，请核对红笔改错后的照片并自行保存。</p>";
+  $("done2").style.display="block";
+  if(window.sendPrompt){try{window.sendPrompt("我完成了今天的20词词汇复习打卡，第一轮匹配共出错 "+totalErr+" 次，第二轮默写已对答案并拍照。")}catch(err){}}
+});
+renderGroup();
+</script>
+</body>
+</html>
