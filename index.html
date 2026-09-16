@@ -13,6 +13,7 @@
 }
 body{font-family:var(--kimi-font-sans);margin:16px;background:#fff;color:var(--kimi-color-text-primary)}
 </style>
+<base target="_blank">
 </head>
 <body>
 <style>
@@ -47,7 +48,7 @@ body{font-family:var(--kimi-font-sans);margin:16px;background:#fff;color:var(--k
 .vr img.prev{max-width:100%;border-radius:10px;margin-top:8px}
 </style>
 <div class="vr">
-  <div class="bar"><strong style="font-size:17px;font-weight:500">词汇复习 · 两轮练习</strong><span class="chip">已掌握 <b id="cM">0</b>/20</span><span class="chip">需复习 <b id="cR">0</b></span><span class="chip">总错误 <b id="cE">0</b></span></div>
+  <div class="bar"><strong style="font-size:17px;font-weight:500">词汇复习 · 两轮练习</strong><span class="chip">已掌握 <b id="cM">0</b>/<b id="cT">0</b></span><span class="chip">需复习 <b id="cR">0</b></span><span class="chip">总错误 <b id="cE">0</b></span></div>
   <div class="tabs">
     <button class="tab on" id="t1">第一轮 · 中英匹配</button>
     <button class="tab" id="t2" disabled title="完成第一轮后解锁">第二轮 · 默写对答案</button>
@@ -83,11 +84,11 @@ body{font-family:var(--kimi-font-sans);margin:16px;background:#fff;color:var(--k
 </div>
 
 <script>
-var W=[["snowboard","v. & n.","单板滑雪"],["ski","v. & n.","（自由式）滑雪"],["important","a.","重要的"],["parent","n.；v.","父（母）亲；养育"],["coast","n.","海岸"],["net","n.","网"],["population","n.","人口；数量（种群）"],["relax","v.","休闲；放松"],["fishing rod","n.","鱼竿"],["smile","v.","微笑"],["sail","v.","航行"],["close","a.；v.","靠近的；亲密的；关闭（be close to）"],["land","n.；v.","陆地；土地；着陆"],["thin","a.","薄的；稀的；瘦的"],["cloth","n.","布"],["comfortable","a.","舒适的"],["popular","a.","流行的；受欢迎的"],["difficult","a.","困难的"],["slow","a.","慢的"],["athlete","n.","运动员"]];
+var W=[["electrician","n.","电工"],["magazine","n.","杂志"],["website","n.","网站"],["unusual","a.","不寻常的"],["interested","a.","感兴趣的（be interested in 对…感兴趣）"],["normal","a.；n.","正常的；常态"],["same","a.","相同的"],["kind","n.；a.","种类；善良的"],["enjoy","v.","喜爱；欣赏；享受"],["wife","n.","妻子"],["paste","v.","粘贴"],["dress","v.","穿衣服"],["count down","","倒计时"],["run","v.","跑；奔跑"],["read","v.","阅读"],["make","v.","做；使出现"],["sing","v.","唱歌；演唱"],["wear","v.","穿；戴"]];
 var matchedOnce=new Set(), review=new Set(), totalErr=0, groupNo=0, gErr=0, sel=null, cur=[];
 function $(id){return document.getElementById(id)}
 function shuf(a){a=a.slice();for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=a[i];a[i]=a[j];a[j]=t}return a}
-function upd(){var m=0;W.forEach(function(w){if(matchedOnce.has(w[0])&&!review.has(w[0]))m++});$("cM").textContent=m;$("cR").textContent=review.size;$("cE").textContent=totalErr}
+function upd(){var m=0;W.forEach(function(w){if(matchedOnce.has(w[0])&&!review.has(w[0]))m++});$("cM").textContent=m;$("cR").textContent=review.size;$("cE").textContent=totalErr;$("cT").textContent=W.length}
 function pickGroup(){var p=shuf(W.filter(function(w){return review.has(w[0])}));p=p.concat(shuf(W.filter(function(w){return !review.has(w[0])&&!matchedOnce.has(w[0])})));return p.slice(0,5)}
 function renderGroup(){
   gErr=0;sel=null;cur=pickGroup();
@@ -142,7 +143,7 @@ $("t2").addEventListener("click",openRound2);
 $("go2").addEventListener("click",function(){$("t2").disabled=false;openRound2()});
 // 第二轮
 var order=shuf(W),q=$("quiz");
-order.forEach(function(w){var li=document.createElement("li");li.innerHTML='<span style="min-width:96px;font-weight:500">'+w[0]+'</span><span class="ans">'+w[1]+' '+w[2]+'</span>';q.appendChild(li)});
+order.forEach(function(w){var li=document.createElement("li");li.innerHTML='<span style="min-width:96px;font-weight:500">'+w[0]+'</span><span class="ans">'+(w[1]?w[1]+' ':'')+w[2]+'</span>';q.appendChild(li)});
 $("reveal").addEventListener("click",function(){q.classList.remove("hideans")});
 $("hide").addEventListener("click",function(){q.classList.add("hideans")});
 $("shot").addEventListener("change",function(e){
@@ -154,7 +155,7 @@ $("fin").addEventListener("click",function(){
   var d=new Date(),m=("0"+(d.getMonth()+1)).slice(-2),day=("0"+d.getDate()).slice(-2),hh=("0"+d.getHours()).slice(-2),mm=("0"+d.getMinutes()).slice(-2);
   $("done2").innerHTML="<h3>今日打卡完成</h3><p style='font-size:14px;color:var(--kimi-color-text-secondary,#666);margin:0'>打卡时间："+d.getFullYear()+"-"+m+"-"+day+" "+hh+":"+mm+"<br>第一轮总错误："+totalErr+" 次；第二轮默写顺序已固定，请核对红笔改错后的照片并自行保存。</p>";
   $("done2").style.display="block";
-  if(window.sendPrompt){try{window.sendPrompt("我完成了今天的20词词汇复习打卡，第一轮匹配共出错 "+totalErr+" 次，第二轮默写已对答案并拍照。")}catch(err){}}
+  if(window.sendPrompt){try{window.sendPrompt(""+"我完成了今天的"+W.length+"词词汇复习打卡"+，第一轮匹配共出错 "+totalErr+" 次，第二轮默写已对答案并拍照。")}catch(err){}}
 });
 renderGroup();
 </script>
