@@ -120,7 +120,7 @@ function onPick(e){
 function finishGroup(){
   var ks=cur.map(function(w){return w[0]}),msg;
   if(gErr>=2){ks.forEach(function(k){review.add(k)});msg="本组错误 "+gErr+" 次（≥2），这 "+cur.length+" 个词已进入「需要复习」，后续会再次出现。"}
-  else{ks.forEach(function(k){review.delete(k)});msg="本组通过，错误 "+gErr+" 次。"+(ks.some(function(k){return false})?"":"")}
+  else{ks.forEach(function(k){review.delete(k)});msg="本组通过，错误 "+gErr+" 次。"}
   var leftReview=ks.filter(function(k){return review.has(k)});
   if(leftReview.length&&gErr<2)msg+="其中 "+leftReview.length+" 个词移出了复习列表。";
   $("gMsg").textContent=msg;upd();
@@ -155,7 +155,7 @@ $("fin").addEventListener("click",function(){
   var d=new Date(),m=("0"+(d.getMonth()+1)).slice(-2),day=("0"+d.getDate()).slice(-2),hh=("0"+d.getHours()).slice(-2),mm=("0"+d.getMinutes()).slice(-2);
   $("done2").innerHTML="<h3>今日打卡完成</h3><p style='font-size:14px;color:var(--kimi-color-text-secondary,#666);margin:0'>打卡时间："+d.getFullYear()+"-"+m+"-"+day+" "+hh+":"+mm+"<br>第一轮总错误："+totalErr+" 次；第二轮默写顺序已固定，请核对红笔改错后的照片并自行保存。</p>";
   $("done2").style.display="block";
-  if(window.sendPrompt){try{window.sendPrompt(""+"我完成了今天的"+W.length+"词词汇复习打卡"+，第一轮匹配共出错 "+totalErr+" 次，第二轮默写已对答案并拍照。")}catch(err){}}
+  if(window.sendPrompt){try{window.sendPrompt("我完成了今天的"+W.length+"词词汇复习打卡，第一轮匹配共出错 "+totalErr+" 次，第二轮默写已对答案并拍照。")}catch(err){}}
 });
 renderGroup();
 </script>
